@@ -6,8 +6,8 @@
 #### NOTE: Be sure to have docker running
 
 ```bash
-git clone 
-cd my-app/
+git clone https://github.com/iAmCodeHead/webhook-Processor.git webhook-processor
+cd webhook-processor/
 docker compose up -d
 ```
 
@@ -26,6 +26,8 @@ npm run dev
 ```
 
 #### NOTE: Ensure that you have your local variables set as shown in `.env.development.local`
+
+#### NOTE: Ensure that you have redis installed on your local computer
 
 Your app should be available of PORT `3000` or any other port you configured.
 
