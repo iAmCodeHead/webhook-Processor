@@ -1,7 +1,7 @@
 
 import { logger } from '@/utils/pino-logger';
 import { QueueRepository } from './repository/job-queue.repository';
-import { MAX_PARALLEL_JOBS, TRIGGER_QUEUES_IN_MS } from '@/config';
+import { MAX_PARALLEL_JOBS, SIMULATE_FAILURE, TRIGGER_QUEUES_IN_MS } from '@/config';
 import { RedisClientType } from '@/utils/redis';
 import { MetricsRepository } from '../metrics/repository/metrics.repository';
 import { Job } from '@/interfaces/shared-job.interface';
@@ -26,7 +26,7 @@ private readonly metricsRepository: MetricsRepository;
     const res = await new Promise((r) => setTimeout(r, delay));
 
     // simulate failure
-    if (Math.random() < 0.1) {
+    if (SIMULATE_FAILURE && Math.random() < 0.1) {
       throw new Error('Random processing error');
     }
   
