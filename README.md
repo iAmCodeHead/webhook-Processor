@@ -25,6 +25,8 @@ npm install
 npm run dev
 ```
 
+#### NOTE: Ensure that you have your local variables set as shown in `.env.development.local`
+
 Your app should be available of PORT `3000` or any other port you configured.
 
 ## Endpoints
@@ -63,8 +65,6 @@ This endpoint returns a set of metrcis partaning to the queue with a status of `
     }
 }
 ```
-
-#### NOTE: Ensure that you have your local variables set as shown in `.env.development.local`
 
 ## Tests
 
