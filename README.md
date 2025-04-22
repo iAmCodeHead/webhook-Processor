@@ -8,7 +8,7 @@
 ```bash
 git clone https://github.com/iAmCodeHead/webhook-Processor.git webhook-processor
 cd webhook-processor/
-docker compose up -d
+docker compose up
 ```
 
 To check status, run:
