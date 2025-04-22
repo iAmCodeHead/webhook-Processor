@@ -56,14 +56,14 @@ describe('Webhook Controller', () => {
     });
 
     it(`should return ${StatusCodes.TOO_MANY_REQUESTS} when request hits a set threshold of ${QUEUE_RATE_LIMIT}`, async () => {
-        const spy = jest.spyOn(MetricsRepository.prototype, 'getPendingQueueLength').mockResolvedValue(Number(QUEUE_RATE_LIMIT!));
+        jest.spyOn(metrics, 'getPendingQueueLength').mockResolvedValue(Number(QUEUE_RATE_LIMIT!));
         const response = await request(server).post('/webhook').send(newWebhookReq()).set('Content-Type', 'application/json');
         expect(response.status).toBe(StatusCodes.TOO_MANY_REQUESTS);
     });
 
     it(`should allow the request if pending jobs < ${QUEUE_RATE_LIMIT}`, async () => {
     
-        jest.spyOn(MetricsRepository.prototype, 'getPendingQueueLength').mockResolvedValue(Number(QUEUE_RATE_LIMIT!) - 1);
+        jest.spyOn(metrics, 'getPendingQueueLength').mockResolvedValue(Number(QUEUE_RATE_LIMIT!) - 1);
 
         const response = await request(server)
           .post('/webhook')

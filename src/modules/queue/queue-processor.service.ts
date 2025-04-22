@@ -6,9 +6,8 @@ import { RedisClientType } from '@/utils/redis';
 import { MetricsRepository } from '../metrics/repository/metrics.repository';
 import { Job } from '@/interfaces/shared-job.interface';
 
-let shutdownResolver;
 
-export class QueueProcessor {
+export class QueueProcessorService {
 
 private readonly repository: QueueRepository;
 private readonly metricsRepository: MetricsRepository;
@@ -116,12 +115,12 @@ private runRetries = async(): Promise<void> => {
 public async gracefulShutdown(): Promise<void> {
   const activeJobs = await this.metricsRepository.getActiveJobs();
   logger.info(`[${process.pid}] Graceful shutdown started`);  
-  return new Promise(async (resolve) => {
+  return new Promise((resolve) => {
     if (activeJobs === 0) {
       logger.info('last job is complete: shutting down...');
       return resolve();
     }
-    shutdownResolver = resolve;
+   resolve();
   });
 }
 

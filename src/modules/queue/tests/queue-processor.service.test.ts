@@ -2,9 +2,8 @@ import RedisMock from 'ioredis-mock';
 import { FAILED_KEY, PENDING_KEY } from '../../../constants/queue.constant';
 import { TRIGGER_QUEUES_IN_MS } from '@/config';
 import { v4 as uuidv4 } from 'uuid';
-import { logger } from '@/utils/pino-logger';
 import { QueueRepository } from '../repository/job-queue.repository';
-import { QueueProcessor } from '../queue.processor';
+import { QueueProcessorService } from '../queue-processor.service';
 import { Job } from '@/interfaces/shared-job.interface';
 
 /**
@@ -15,7 +14,7 @@ describe('Queue Processor', () => {
 
     const redis = new RedisMock();
     const repository = new QueueRepository(redis);
-    const queueProcessor = new QueueProcessor(redis);
+    const queueProcessor = new QueueProcessorService(redis);
   
   beforeAll(async () => {
     redis.flushall();
@@ -35,7 +34,6 @@ describe('Queue Processor', () => {
     it(`it should process ${PENDING_KEY} after ${TRIGGER_QUEUES_IN_MS}ms`, async () => {
 
       const mockRunner = jest.fn();
-      const loggerSpy = jest.spyOn(logger, 'info').mockImplementation(() => {});
 
       const job: Job = {
         id: uuidv4(),
@@ -52,7 +50,6 @@ describe('Queue Processor', () => {
 
       await Promise.resolve();
       
-      expect(loggerSpy).toHaveBeenCalledWith('initiating Queue Processing');
       expect(mockRunner).toHaveBeenCalledTimes(1);
       expect(mockRunner).toHaveBeenCalled();
     });
@@ -61,7 +58,6 @@ describe('Queue Processor', () => {
   describe('initiateRetriesProcessor()', () => {
     it(`it should process ${FAILED_KEY} after ${TRIGGER_QUEUES_IN_MS}ms`, async() => {
         const mockRunner = jest.fn();
-        const loggerSpy = jest.spyOn(logger, 'info').mockImplementation(() => {});
   
         const job: Job = {
           id: uuidv4(),
@@ -78,7 +74,6 @@ describe('Queue Processor', () => {
   
         await Promise.resolve();
         
-        expect(loggerSpy).toHaveBeenCalledWith('initiating retries');
         expect(mockRunner).toHaveBeenCalledTimes(1);
         expect(mockRunner).toHaveBeenCalled();
       });

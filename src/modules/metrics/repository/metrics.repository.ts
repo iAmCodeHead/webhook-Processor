@@ -1,4 +1,3 @@
-import { ProcessedResult } from "@/interfaces/shared-job.interface";
 import { ACTIVE_JOBS, FAILED_KEY, PENDING_KEY, PROCESSED_KEY, PROCESSING_TIME, TOTAL_429s, TOTAL_FAILED_JOBS, TOTAL_PROCESSED_JOBS, TOTAL_REQUESTS_RECEIVED } from "@/constants/queue.constant";
 import { RedisClientType } from "@/utils/redis";
 
@@ -50,18 +49,6 @@ export class MetricsRepository {
       return await this.redis.llen(FAILED_KEY);
     }
 
-    public getTotalProcessed(): Promise<number> {
-      return this.getProccessedQueueLength();
-    }
-    
-    public getTotalFailedJobs(): Promise<number> {
-      return this.getFailedQueueLength();
-    }
-    
-    public getCurrentQueueLength(): Promise<number> {
-      return this.getPendingQueueLength();
-    }
-
     public async getTotal429s(): Promise<number> {
       return Number(await this.redis.get(TOTAL_429s)) || 0;
     }
@@ -83,7 +70,7 @@ export class MetricsRepository {
       await this.redis.incrbyfloat(PROCESSING_TIME, time);
     }
     
-    public async measurePerf(fn: Function): Promise<ProcessedResult> {
+    public async measurePerf<T>(fn: () => Promise<T>): Promise<T> {
       const start = performance.now();
       const result = await fn();
       const duration = performance.now() - start;

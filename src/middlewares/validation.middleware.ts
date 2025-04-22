@@ -1,6 +1,6 @@
 import { ClassConstructor, plainToInstance } from 'class-transformer';
-import { validate, ValidationError } from 'class-validator';
-import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { validate } from 'class-validator';
+import { NextFunction, Request, Response } from 'express';
 import { UnprocessableEntityError } from '@exceptions/HttpException';
 
 export default class RequestValidator {

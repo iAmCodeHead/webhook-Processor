@@ -4,7 +4,7 @@ import ErrorMiddleware from '@middlewares/error.middleware';
 import os from 'os';
 import cluster from 'cluster';
 import { PORT } from './config';
-import { QueueProcessor } from './modules/queue/queue.processor';
+import { QueueProcessorService } from './modules/queue/queue-processor.service';
 import http from "http";
 import { Response } from "express";
 import { logger } from './utils/pino-logger';
@@ -16,7 +16,7 @@ const app = setupServer();
 let server: http.Server;
 const numCPUs = os.cpus().length;
 
-const processor = new QueueProcessor(createRedisClient());
+const processor = new QueueProcessorService(createRedisClient());
 
 async function bootstrap(): Promise<http.Server> {
 
@@ -35,7 +35,7 @@ async function bootstrap(): Promise<http.Server> {
     }
   
     cluster.on('exit', (worker, code, signal) => {
-      logger.error(`Worker ${worker.process.pid} died`);
+      logger.error(`Worker ${worker.process.pid} died | ${code} | ${signal}`);
       cluster.fork();
     });
   } else {

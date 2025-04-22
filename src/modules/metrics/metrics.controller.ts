@@ -1,27 +1,41 @@
 import { NextFunction, Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { createRedisClient } from '@/utils/redis';
-import { MetricsRepository } from './repository/metrics.repository';
+import { MetricsService } from './metrics.service';
 
 export default class MetricsController {
 
-  private readonly metrics: MetricsRepository;
+  private readonly metrics: MetricsService;
   
   constructor() {
-    this.metrics = new MetricsRepository(createRedisClient());
+    this.metrics = new MetricsService();
   }
 
   public getMetrics = async (req: Request, res: Response, next: NextFunction) => {
     try {
+
+     const [totalRequestsReceived,
+      totalRequestsProcessed,
+      currentQueueLength,
+      total429sReturned,
+      averageProcessingTime,
+      totalFailedJobs] = await Promise.all([
+        this.metrics.getTotalRequestReceived(),
+        this.metrics.getTotalProcessed(),
+        this.metrics.getCurrentQueueLength(),
+        this.metrics.getTotal429s(),
+        this.metrics.getAvgResponseTime(),
+        this.metrics.getTotalFailedJobs(),
+      ]);
+      
         const data = {
-            totalRequestsReceived: await this.metrics.getTotalRequestReceived(),
-            totalRequestsProcessed: await this.metrics.getTotalProcessed(),
-            currentQueueLength: await this.metrics.getCurrentQueueLength(),
-            total429sReturned: await this.metrics.getTotal429s(),
-            averageProcessingTime: await this.metrics.getAvgResponseTime(),
-            totalFailedJobs: await this.metrics.getTotalFailedJobs(),
+            totalRequestsReceived,
+            totalRequestsProcessed,
+            currentQueueLength,
+            total429sReturned,
+            averageProcessingTime,
+            totalFailedJobs,
         }
-        res.status(StatusCodes.OK).json({ message: 'Request Successful', data: {...data} });
+        res.status(StatusCodes.OK).json({ message: 'Request Successful', data });
     } catch (error) {
       next(error);
     }
