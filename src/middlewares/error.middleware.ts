@@ -9,7 +9,6 @@ export default class ErrorMiddleware {
         const status: number = error.statusCode || 500;
         const message: string = error.message || 'Something went wrong';
         const rawErrors: string[] = error.rawErrors || [];
-        // const stack: string = error.stack || 'No stack trace available';
 
         logger.error(`[${req.method}] ${req.path} >> StatusCode:: ${status}, Message:: ${message}`);
         res.status(status).json({ message, rawErrors });
